@@ -1,0 +1,60 @@
+{
+  "name": "battery-store-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:frontend:desktop": "npm --prefix frontend run build:desktop",
+    "build:all:desktop": "npm run build:backend && npm run build:frontend:desktop",
+    "desktop:start": "npm run build:all:desktop && electron .",
+    "desktop:pack": "npm run build:all:desktop && electron-builder --win dir",
+    "desktop:dist": "npm run build:all:desktop && electron-builder --win nsis -c.compression=store",
+    "desktop:dist:portable": "npm run build:all:desktop && electron-builder --win portable -c.compression=store",
+    "desktop:dist:quick": "npm run build:all:desktop && electron-builder --win portable -c.compression=store"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.batterystore.desktop",
+    "productName": "Battery Store",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "backend/package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "frontend/build",
+        "to": "frontend/build"
+      },
+      {
+        "from": "backend/dist",
+        "to": "backend/dist"
+      },
+      {
+        "from": ".env",
+        "to": ".env"
+      }
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
