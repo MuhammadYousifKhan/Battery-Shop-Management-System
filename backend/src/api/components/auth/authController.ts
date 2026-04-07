@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../../models/User';
 
-const JWT_SECRET = process.env.JWT_SECRET || "default_jwt_secret";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -79,6 +79,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     
     // 5. Success - Generate Token & Response
     // @ts-ignore
+    if (!JWT_SECRET) { res.status(500).json({ message: 'Server auth misconfiguration: JWT secret is missing.' }); return; }
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "8h" });
     
     res.json({ 

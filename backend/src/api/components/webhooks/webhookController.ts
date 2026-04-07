@@ -64,11 +64,12 @@ export const handleWhatsAppWebhook = asyncHandler(async (req: Request, res: Resp
 });
 
 export const verifyWebhook = (req: Request, res: Response) => {
-  const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN || 'battery_store_webhook_123';
+  const verifyToken = process.env.WEBHOOK_VERIFY_TOKEN;
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
+  if (!verifyToken) { res.status(500).send('Webhook verify token is not configured.'); return; }
   if (mode === 'subscribe' && token === verifyToken) {
     res.status(200).send(challenge as any);
   } else {

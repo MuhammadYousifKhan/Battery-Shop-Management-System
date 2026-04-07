@@ -17,7 +17,8 @@ const getMongoURI = (): string => {
 const seedAdminUser = async () => {
   try {
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) { console.warn("⚠️  ADMIN_PASSWORD not set. Skipping default admin seed for safety."); return; }
 
     const userCount = await User.countDocuments();
     if (userCount > 0) {
